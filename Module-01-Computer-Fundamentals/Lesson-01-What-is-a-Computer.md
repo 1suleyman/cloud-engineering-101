@@ -1,9 +1,20 @@
+# Lesson 01 – What is a Computer?
 
-What is computer?
-- A computer is programmable machine
+## Learning Objective
 
-What four fundamental functions does a computer perform?
-1. Input - Receive data
-2. Processing - Execute intructions on that data
-3. Storage - Save or retrieve data when needed
-4. Output - Return a result
+Understand what a computer is and identify its four fundamental functions.
+
+---
+
+## Notes
+
+### What is a computer?
+
+- A computer is a programmable machine.
+
+### What are the four fundamental functions of a computer?
+
+1. Input – Receive data.
+2. Processing – Execute instructions on that data.
+3. Storage – Save or retrieve data when needed.
+4. Output – Return a result.

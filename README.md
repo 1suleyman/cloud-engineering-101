@@ -23,4 +23,4 @@ Each project may contain:
 
 ### Module 0 — Enterprise Computing Foundations
 
-- Bob's Burger Windows Domain Infrastructure
+- [Bob's Burger Windows Domain Infrastructure](https://github.com/1suleyman/cloud-engineering-101/tree/main/bobsburger-windows-domain)

@@ -11,3 +11,4 @@ between a client computer and Domain Controller available to see under the sub h
 - The Windows client initiates the domain-related communication
 toward the Domain Controller. Therefore, I will create a Windows Client SG outbound and Domain Controller SG inbound. AWS Security Groups are stateful, so response traffic for
 permitted connections does not require equivalent reverse rules.
+- Due to no business requirements expliciity stating a need for internet egress, I have decided to exclude implementing it for this Proof-of-Concept (POC)

@@ -6,18 +6,33 @@ containerisation and DevOps engineering skills.
 
 ## Project Structure
 
-Each project may contain:
+Each project is designed to tell its complete engineering story through a single `README.md`.
 
-| File / Directory | Purpose |
+### `README.md`
+
+The project README may contain:
+
+- Business problem
+- Project goal
+- Business requirements
+- Architecture and diagrams
+- Design decisions and engineering reasoning
+- Build and implementation notes
+- Troubleshooting, investigations and fixes
+- Validation and supporting evidence
+- Production considerations
+- Project outcome and lessons learned
+
+Architecture diagrams, screenshots and other visual evidence are displayed directly within the project README so the complete project can be reviewed from a single page.
+
+### Supporting Directories
+
+| Directory | Purpose |
 |---|---|
-| `README.md` | Project overview, business problem, architecture and outcome |
-| `architecture/` | Architecture diagrams and system designs |
-| `docs/design-decisions.md` | Research, trade-offs and engineering decisions |
-| `docs/build-notes.md` | Implementation process and configuration |
-| `docs/validation.md` | Evidence demonstrating that requirements were met |
-| `docs/troubleshooting.md` | Problems, investigation, root causes and fixes |
-| `docs/production-considerations.md` | Changes required for a production deployment |
-| `screenshots/` | Supporting implementation and validation evidence |
+| `terraform/` | Terraform infrastructure code, when applicable |
+| `scripts/` | Automation and supporting scripts, when applicable |
+
+Supporting directories are only created when required by the project.
 
 ## Projects
 

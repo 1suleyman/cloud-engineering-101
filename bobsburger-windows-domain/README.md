@@ -39,7 +39,7 @@ coming...
 
 ### Domain Controller Network Requirements
 
-### Requirement
+#### Requirement
 
 The Windows client must be able to join and communicate with
 the corp.bobsburger.com Active Directory domain.
@@ -56,6 +56,91 @@ permitted connections does not require equivalent reverse rules.
 The following network services and ports are required between the Windows client and Domain Controller to save you time as opposed to clicking on the link:
 
 <img width="705" height="408" alt="Screenshot 2026-08-11 at 22 09 08" src="https://github.com/user-attachments/assets/b1079d15-a4db-4167-8b07-cf33d813c1a8" />
+
+### Private Administrative Access with AWS Systems Manager
+
+#### Requirement
+
+Both `DC01` and `CLIENT01` need to be administratively accessible without assigning public IP addresses or exposing inbound RDP access from the Internet.
+
+### Design Decision
+
+AWS Systems Manager Fleet Manager will be used for administrative access to both Windows EC2 instances.
+
+The instances will remain private and will communicate with Systems Manager through interface VPC endpoints in `eu-west-2`.
+
+### Security Group Design
+
+A shared `SSM-ManagedNode-SG` will be attached to both `DC01` and `CLIENT01`.
+
+Its purpose is to allow the managed Windows instances to initiate the required HTTPS communication toward the Systems Manager interface endpoints.
+
+```text
+DC01
+├── DC-SG
+└── SSM-ManagedNode-SG
+          │
+          │ HTTPS TCP 443
+          ▼
+    SSM-Endpoint-SG
+          │
+          ▼
+SSM Interface Endpoints
+├── ssm
+└── ssmmessages
+
+
+CLIENT01
+├── Client-SG
+└── SSM-ManagedNode-SG
+          │
+          │ HTTPS TCP 443
+          ▼
+    SSM-Endpoint-SG
+          │
+          ▼
+SSM Interface Endpoints
+├── ssm
+└── ssmmessages
+```
+
+The following Systems Manager interface endpoints will be used:
+
+- `com.amazonaws.eu-west-2.ssm`
+- `com.amazonaws.eu-west-2.ssmmessages`
+
+`ec2messages` has intentionally not been included. Although `eu-west-2`
+supports the `ec2messages` endpoint, current Systems Manager Agent
+communication uses `ssmmessages`, which AWS recommends over
+`ec2messages`.
+
+<img width="601" height="253" alt="Screenshot 2026-08-16 at 16 12 18" src="https://github.com/user-attachments/assets/204c9b77-0f38-4b75-a3da-26a80ec7133f" />
+
+[Reference if you want to research for yourself](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-release-history.html)
+
+The Security Group responsibilities are:
+
+* `DC-SG` — Active Directory-specific network rules for the Domain Controller.
+* `Client-SG` — Active Directory-specific network rules for the domain-joined Windows client.
+* `SSM-ManagedNode-SG` — reusable outbound HTTPS access from managed EC2 instances to the SSM interface endpoints.
+* `SSM-Endpoint-SG` — inbound HTTPS access to the interface endpoints from `SSM-ManagedNode-SG`.
+
+This allows the SSM networking rules to be reused across both Windows instances while keeping the Domain Controller and client-specific rules separate.
+
+Because AWS Security Group permissions are additive, broader outbound rules such as `Allow All` should not also be attached if the intention is to maintain restricted egress.
+
+### Why This Approach
+
+This avoids:
+
+* assigning public IP addresses to the Windows instances,
+* exposing inbound RDP port `3389`,
+* deploying an additional bastion EC2 instance,
+* adding a full Client VPN purely for this POC,
+* providing general Internet egress.
+
+It also keeps the project focused on the Windows domain infrastructure while still providing a controlled AWS-native administrative access path.
+
 
 ## Build / Implementation
 coming...

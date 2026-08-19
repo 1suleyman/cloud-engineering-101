@@ -57,6 +57,8 @@ The following network services and ports are required between the Windows client
 
 <img width="705" height="408" alt="Screenshot 2026-08-11 at 22 09 08" src="https://github.com/user-attachments/assets/b1079d15-a4db-4167-8b07-cf33d813c1a8" />
 
+Note: [Microsoft's current guidance](https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/default-dynamic-port-range-tcpip-chang) states that Windows Server 2008 and later use the default dynamic port range 49152–65535, replacing the lower dynamic ranges used by older Windows versions. As this POC uses a modern Windows Server version, the Security Group design will permit TCP 49152–65535 for dynamic RPC communication rather than the broader 1024–65535 range shown in the original domain-join port table. This reduces unnecessary network exposure while supporting the required Active Directory RPC communication.
+
 ### Private Administrative Access with AWS Systems Manager
 
 #### Requirement

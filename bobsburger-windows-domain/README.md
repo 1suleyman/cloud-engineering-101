@@ -143,6 +143,32 @@ This avoids:
 
 It also keeps the project focused on the Windows domain infrastructure while still providing a controlled AWS-native administrative access path.
 
+### Private Access to Amazon S3
+
+The Windows instances intentionally do not have public IP addresses or
+general Internet egress.
+
+During implementation, a requirement arose to retrieve software required
+for Systems Manager administrative functionality. Rather than introducing
+general Internet access through a NAT Gateway, I plan to provide private
+access to Amazon S3 using an S3 Gateway VPC endpoint.
+
+The intended remediation path is:
+
+```text
+Internet-connected workstation
+        │
+        │ Download required package
+        ▼
+Private S3 bucket
+        │
+        │ S3 Gateway VPC Endpoint
+        ▼
+Private VPC
+        │
+        ▼
+DC01
+```
 
 ## Build / Implementation
 coming...
@@ -165,6 +191,100 @@ DNS hostnames (enableDnsHostnames) — for a nondefault VPC, this is normally di
 
 <img width="273" height="115" alt="Screenshot 2026-08-19 at 18 38 39" src="https://github.com/user-attachments/assets/a77c41f6-d4b5-4490-bd3f-2087f245a4e1" />
 
+### Fleet Manager PowerShell Keyboard Input Failure
+
+After successfully registering `DC01` as a Systems Manager managed node,
+I connected to the instance using AWS Systems Manager Fleet Manager.
+
+The graphical remote desktop connection succeeded, but keyboard input
+inside Windows PowerShell did not function correctly.
+
+#### Symptom
+
+PowerShell opened successfully, but normal keyboard input could not be
+entered at the command prompt.
+
+<img width="866" height="717" alt="image" src="https://github.com/user-attachments/assets/f4ed933a-6f4f-4417-93fd-836bd051c9ad" />
+
+#### Investigation
+
+[AWS documentation states that Windows Server 2022 managed nodes require
+PSReadLine version `2.2.2` or later for PowerShell keyboard functionality
+when using Fleet Manager.](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-remote-desktop-connections.html)
+
+<img width="1460" height="900" alt="image" src="https://github.com/user-attachments/assets/ed015647-72f7-440a-8519-3f4a7c3c7dd1" />
+
+
+To determine whether this requirement was satisfied, I used Systems Manager
+Run Command with the `AWS-RunPowerShellScript` document to query the
+installed PSReadLine version.
+
+```powershell
+Get-Module -ListAvailable PSReadLine |
+    Select-Object Name, Version, Path
+```
+
+The command completed successfully and returned:
+
+<img width="1051" height="591" alt="Screenshot 2026-08-20 at 16 38 44" src="https://github.com/user-attachments/assets/79b55f8c-19e8-4f5f-acff-61efa511f993" />
+
+The installed version (`2.0.0`) is therefore below the minimum version
+(`2.2.2`) specified by AWS.
+
+#### Root Cause
+
+`DC01` was running PSReadLine `2.0.0`, which does not meet the documented
+minimum PSReadLine version required for the Fleet Manager PowerShell
+keyboard functionality being used.
+
+#### Planned Remediation
+
+`DC01` intentionally has no public IP address or general Internet egress.
+Installing the newer module directly from PowerShell Gallery would therefore
+require introducing Internet connectivity.
+
+Rather than adding general Internet egress solely for this dependency, I
+plan to:
+
+1. Obtain the required PSReadLine package from an Internet-connected system.
+2. Store the package in a private Amazon S3 bucket.
+3. Create an S3 Gateway VPC endpoint for private S3 connectivity.
+4. Grant the EC2 instance role only the S3 permissions required to retrieve
+   the package.
+5. Retrieve and install the newer PSReadLine version on `DC01`.
+6. Verify that PSReadLine `2.2.2` or later is installed.
+7. Reconnect through Fleet Manager and confirm that PowerShell keyboard
+   input functions correctly.
+
+The final resolution and validation evidence will be added after the
+remediation has been tested.
+
+
+```so far
+Original requirement
+        ↓
+No public IPs / no inbound RDP
+        ↓
+Private SSM administration
+        ↓
+Unexpected Fleet Manager problem
+        ↓
+Investigate with SSM Run Command
+        ↓
+PSReadLine 2.0.0 discovered
+        ↓
+Need newer software
+        ↓
+Could add NAT / Internet access
+        ↓
+Reject broader connectivity
+        ↓
+S3 Gateway Endpoint
+        ↓
+Private, scoped remediation path
+````
+
+
 
 ## Validation / Evidence
 coming...
@@ -173,8 +293,7 @@ coming...
 
 ### Domain Controller Internet Connectivity
 
-- A production Domain controller should not be public exposed to the internet but controlled internet outbound connectivity could prove useful for operational dependencies such as patching etc this could be done with a NAT Gateway
-
+- A production Domain Controller should not be directly exposed to the Internet. However, controlled outbound connectivity may be required for operational dependencies such as patching and software retrieval. One option is private-subnet Internet egress through a NAT Gateway, combined with appropriate network and application-layer controls.
 
 ## Outcome / Lessons Learned
 [Complete when the project is finished]

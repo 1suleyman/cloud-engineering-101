@@ -256,35 +256,25 @@ plan to:
 7. Reconnect through Fleet Manager and confirm that PowerShell keyboard
    input functions correctly.
 
+The S3 Gateway endpoint will allow resources in the private subnet to
+access Amazon S3 without requiring a NAT Gateway, Internet Gateway path,
+or public IP address.
+
+Access will remain controlled at multiple layers:
+
+- The S3 bucket will remain private.
+- The S3 Gateway endpoint will be associated only with the route table
+  used by the private subnet.
+- The EC2 instance role will be granted only the S3 permissions required
+  to retrieve the remediation package.
+- General Internet egress will remain unavailable to `DC01`.
+
+This approach introduces only the AWS service connectivity required to
+solve the identified dependency rather than providing unrestricted
+Internet access to the Domain Controller.
+
 The final resolution and validation evidence will be added after the
 remediation has been tested.
-
-
-```so far
-Original requirement
-        ↓
-No public IPs / no inbound RDP
-        ↓
-Private SSM administration
-        ↓
-Unexpected Fleet Manager problem
-        ↓
-Investigate with SSM Run Command
-        ↓
-PSReadLine 2.0.0 discovered
-        ↓
-Need newer software
-        ↓
-Could add NAT / Internet access
-        ↓
-Reject broader connectivity
-        ↓
-S3 Gateway Endpoint
-        ↓
-Private, scoped remediation path
-````
-
-
 
 ## Validation / Evidence
 coming...

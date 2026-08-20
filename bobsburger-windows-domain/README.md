@@ -148,7 +148,23 @@ It also keeps the project focused on the Windows domain infrastructure while sti
 coming...
 
 ## Troubleshooting
-coming...
+
+### SSM Interface Endpoint – Private DNS Failure
+
+When attempting to create the SSM interface VPC endpoint with Private DNS
+enabled, AWS returned:
+
+<img width="796" height="56" alt="Screenshot 2026-08-19 at 18 35 40" src="https://github.com/user-attachments/assets/3ffa05b5-6fcd-4886-81aa-c6b272f06c09" />
+
+**Resolution**
+
+Enabled the required DNS settings on `bobs-burgers-dev-vpc` and retried the
+SSM interface endpoint creation.
+
+DNS hostnames (enableDnsHostnames) — for a nondefault VPC, this is normally disabled by default. It controls whether instances receive Amazon-provided DNS hostnames.
+
+<img width="273" height="115" alt="Screenshot 2026-08-19 at 18 38 39" src="https://github.com/user-attachments/assets/a77c41f6-d4b5-4490-bd3f-2087f245a4e1" />
+
 
 ## Validation / Evidence
 coming...

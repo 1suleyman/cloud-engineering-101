@@ -290,4 +290,4 @@ coming...
 
 ## Project Status
 
-🚧 In Progress
+⏸️ Currently paused.

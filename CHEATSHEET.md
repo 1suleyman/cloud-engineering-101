@@ -34,6 +34,21 @@
 | Start a tiny local HTTP service | `python3 -m http.server 8080` | Runs Python's built-in HTTP server on port 8080 |
 | Test whether the local HTTP service responds | `curl http://localhost:8080` | Sends an HTTP request to the local service and displays its response |
 
+### Boot / System State
+
+| What am I trying to find out?                                           | Command                               | What it tells me                                                                              |
+| ----------------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| How long has this Linux system been running since its most recent boot? | `uptime`                              | Current time, time since the latest boot, logged-in sessions, and 1/5/15-minute load averages |
+| What process is running as PID 1?                                       | `ps -p 1`                             | Identifies the PID 1 process; on our Amazon Linux system this was `systemd`                   |
+| What uniquely identifies the current Linux boot?                        | `cat /proc/sys/kernel/random/boot_id` | Displays the current boot's unique boot ID                                                    |
+
+### systemd / Services
+
+| What am I trying to find out?                    | Command                                    | What it tells me                                                                               |
+| ------------------------------------------------ | ------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| What is the current state of a specific service? | `systemctl status <service>`               | Shows the unit's loaded/active state, main process, recent logs, and other runtime information |
+| Which service units are currently running?       | `systemctl --type=service --state=running` | Lists service units currently in the running state                                             |
+
 ---
 
 ## Module 02 — Linux

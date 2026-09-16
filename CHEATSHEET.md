@@ -18,7 +18,7 @@
 
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
-| How many logical CPUs are available to this workload? | `nproc` | Reports the number of processing units available to the current process |
+| How many logical CPUs are available to this workload? | `nproc` | Reports the number of processing units available to the command's current execution environment. |
 | How much RAM is used, free, and available? | `free -h` | Shows human-readable system memory usage, including used, free, cache, available memory, and swap |
 
 ### Ports / Network Resources

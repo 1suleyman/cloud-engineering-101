@@ -31,9 +31,11 @@
 
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
-| See what path the shell resolves for Python | `which python3` | Command resolution through the current `PATH` |
-| See what path the shell resolves for a specific executable | `which python3.13` | The executable path resolved through the current `PATH` |
+| What executable does the shell resolve for this command name? | `which <commmand>` | Shows the executable currently resolved through the shell's `PATH` |
 | Inspect a filesystem entry | `ls -l <path>` | File type, permissions, ownership, size, modification time and symlink target |
+| Does a regular file with this exact name exist somewhere on the filesystem? | `sudo find / -type f -name <name>` | Searches from `/` for regular files matching the exact name |
+| What directories are currently in my shell's command search path? | `echo $PATH` | Displays the ordered, colon-separated directories in the current `PATH` |
+| Temporarily make a directory searchable for commands in this shell environment | `export PATH="/path/to/directory:$PATH"` | Prepends a directory to `PATH` while preserving the existing search path |
 
 ### Service Testing
 
@@ -65,4 +67,22 @@
 
 ## Module XX — Troubleshooting Toolkit
 
-<!-- Commands will be added naturally as they are encountered -->
+> Working Checklist
+
+Symptom
+   ↓
+Evidence
+   ↓
+Hypothesis
+   ↓
+Test
+   ↓
+Root Cause
+   ↓
+Fix
+   ↓
+Validation
+
+**Core rule:** Do not change the system just because you have observed a symptom.
+Gather enough evidence to distinguish plausible causes, make the smallest justified
+change, then validate the behaviour that actually matters.

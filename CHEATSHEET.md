@@ -9,10 +9,11 @@
 
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
-| Find a process when I know part of its command/name | `ps aux \| grep http.server` | Searches the broad process listing for matching command text |
+| Find a process when I know part of its command/name | `ps aux \| grep '[h]ttp.server'` | Searches the broad process listing for matching command text and avoid the grep process appearing in its own results. |
 | Inspect a known process | `ps -p <PID> -o pid,%cpu,%mem,command` | PID, CPU, memory and command |
 | How much physical RAM is a known process currently using? | `ps -p <PID> -o pid,%cpu,%mem,rss,command` | Shows CPU usage, memory percentage, RSS (resident memory), and command for a specific process |
 | Check whether a known PID still exists | `ps -p <PID>` | Whether that process is still present |
+| What is this process's current working directory? | `lsof -a -p <PID> -d cwd` | Shows the current working directory of the specified process |
 
 ### CPU / Memory
 
@@ -43,6 +44,7 @@
 |---|---|---|
 | Start a tiny local HTTP service | `python3 -m http.server 8080` | Runs Python's built-in HTTP server on port 8080 |
 | Test whether the local HTTP service responds | `curl http://localhost:8080` | Sends an HTTP request to the local service and displays its response |
+| What HTTP status and headers does this endpoint return? | `curl -i <URL>` | Displays the HTTP response headers/status and response body |
 
 ### Boot / System State
 

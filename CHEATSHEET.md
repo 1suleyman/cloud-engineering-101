@@ -65,7 +65,40 @@
 
 ## Module 02 — Linux
 
-<!-- Commands will be added naturally as they are encountered -->
+### Identity / Groups
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| What identity and group memberships does a user have? | `id <user>` | Shows the user's UID, primary GID, and supplementary groups |
+| What members are recorded for a group? | `getent group <group>` | Displays the configured group record and its listed members |
+| Create a new group | `sudo groupadd <group>` | Creates a new Linux group |
+| Create a human user with a home directory | `sudo useradd -m <user>` | Creates the user and creates their home directory |
+| Add an existing user to a supplementary group | `sudo usermod -aG <group> <user>` | Adds the user to the group while preserving their existing supplementary groups |
+| Change a file or directory's group owner | `sudo chgrp <group> <path>` | Changes the group ownership of the specified filesystem object |
+| Start a new shell using a group as the effective/primary group | `newgrp <group>` | Starts a new shell with that group as the effective/primary group |
+| Run one command as another user | `sudo -u <user> <command>` | Executes the specified command using that user's identity; useful for testing access |
+
+### Permissions / Shared Directories
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| Inspect a directory's permissions and ownership | `ls -ld <directory>` | Shows the directory itself rather than listing its contents, including permissions, owner, group, and special permission bits |
+| Add group write permission | `chmod g+w <path>` | `g` = group, `+` = add, `w` = write |
+| Remove group write permission | `chmod g-w <path>` | `g` = group, `-` = remove, `w` = write. The same pattern works with `u/g/o` and `r/w/x` |
+| Make new content inherit a directory's group | `chmod g+s <directory>` | Enables directory setgid so newly created content inherits the directory's group ownership |
+
+### ACLs
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| Inspect a path's access/default ACLs | `getfacl <path>` | Shows ACL entries, ACL masks, defaults, and effective permissions |
+| Configure a default ACL for future content | `setfacl -d -m g:<group>:<permissions> <directory>` | Sets an inheritable group ACL for newly created content inside the directory |
+
+### Public IP / Access Control
+
+| What am I trying to find out? | Command | What it tells me |
+|---|---|---|
+| What public IPv4 address is my current network using? | `curl -4 ifconfig.me` | Returns the public IPv4 seen externally; useful for checking whether an IP-restricted SSH CIDR such as Terraform `allowed_ssh_cidr` still matches your current connection |
 
 ## Module XX — Troubleshooting Toolkit
 

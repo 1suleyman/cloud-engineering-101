@@ -54,12 +54,20 @@
 | What process is running as PID 1? | `ps -p 1` | Identifies the PID 1 process; on our Amazon Linux system this was `systemd` |
 | What uniquely identifies the current Linux boot? | `cat /proc/sys/kernel/random/boot_id` | Displays the current boot's unique boot ID |
 
-### systemd / Services
+### systemd / Service Management
 
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
 | What is the current state of a specific service? | `systemctl status <service>` | Shows the unit's loaded/active state, main process, recent logs, and other runtime information |
 | Which service units are currently running? | `systemctl --type=service --state=running` | Lists service units currently in the running state |
+| Make systemd recognise changes to a unit file | `sudo systemctl daemon-reload` | Makes the systemd manager reread unit configurations; does not restart running services |
+| Start or restart a managed service | `sudo systemctl start <service>` / `sudo systemctl restart <service>` | Starts an inactive service or restarts an existing service; useful after changing its configuration |
+| Configure automatic startup after reboot | `sudo systemctl enable <service>` | Creates the configured enablement symlinks; does not immediately start the service |
+| Check whether a service is enabled at boot | `systemctl is-enabled <service>` | Reports the unit's enablement state, independently of whether it is currently running |
+| Investigate recent logs for a specific service | `sudo journalctl -u <service> -n 50 --no-pager` | Displays the latest 50 journal entries associated with the unit, including startup failures and restart attempts |
+| Clear a service's failed state and restart-rate counter | `sudo systemctl reset-failed <service>` | Clears recorded failure state and restart-rate limiting counters, allowing another startup attempt after the underlying issue is fixed |
+| Check whether an application is listening on its expected TCP port | `sudo ss -lntp` | Lists listening TCP sockets with numeric addresses/ports and associated process information where available |
+
 
 ---
 

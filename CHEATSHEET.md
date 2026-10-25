@@ -1,3 +1,4 @@
+
 # Cloud Engineering Command Cheat Sheet
 
 > Quick-reference commands encountered during labs and projects.
@@ -28,6 +29,7 @@
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
 | Find what is associated with port 8080 | `lsof -i :8080` | Network resources/processes associated with port 8080. |
+| Which network interfaces and IP addresses does this Linux instance have? | `ip -br addr` | Shows a concise list of network interfaces, their states, and assigned IP addresses. Useful for distinguishing loopback (`127.0.0.1`) from private network interfaces. |
 
 ### Filesystem / Executables
 
@@ -43,9 +45,11 @@
 
 | What am I trying to find out? | Command | What it tells me |
 |---|---|---|
-| Start a tiny local HTTP service | `python3 -m http.server 8080` | Runs Python's built-in HTTP server on port 8080. |
+| Start a tiny local HTTP service | `python3 -m http.server 8080` | Runs Python's built-in HTTP server on port 8080. By default, it listens on all available interfaces. |
+| Start an HTTP test server accessible only through IPv4 loopback | `python3 -m http.server 8080 --bind 127.0.0.1` | Starts a temporary HTTP server listening only on `127.0.0.1:8080`. Useful for local application and systemd testing without exposing the listener on the instance's private network interface. |
 | Test whether the local HTTP service responds | `curl http://localhost:8080` | Sends an HTTP request to the local service and displays its response. |
 | What HTTP status and headers does this endpoint return? | `curl -i <URL>` | Displays the HTTP response headers/status and response body. |
+| Can this HTTP endpoint respond to a HEAD request? | `curl -I <URL>` | Requests HTTP response headers without the response body. Useful for checking status codes such as `200 OK`. Some endpoints do not support HEAD requests. |
 
 ### Boot / System State
 
@@ -54,6 +58,8 @@
 | How long has this Linux system been running since its most recent boot? | `uptime` | Current time, time since the latest boot, logged-in sessions, and 1/5/15-minute load averages. |
 | What process is running as PID 1? | `ps -p 1` | Identifies the PID 1 process; on our Amazon Linux system this was `systemd`. |
 | What uniquely identifies the current Linux boot? | `cat /proc/sys/kernel/random/boot_id` | Displays the current boot's unique boot ID. |
+| Which systemd units are currently in a failed state? | `systemctl --failed` | Lists units currently recorded as failed. An empty result does not prove that no failures occurred earlier. |
+| What error-priority messages occurred during the current boot? | `sudo journalctl -b -p err --no-pager` | Shows journal entries with error priority or higher from the current boot. Useful for boot investigations; not every error indicates an application failure. |
 
 ### systemd / Service Management
 
@@ -61,11 +67,13 @@
 |---|---|---|
 | What is the current state of a specific service? | `systemctl status <service>` | Shows the unit's loaded/active state, main process, recent logs, and other runtime information. |
 | Which service units are currently running? | `systemctl --type=service --state=running` | Lists service units currently in the running state. |
+| What unit configuration is systemd using for this service? | `systemctl cat <service>` | Displays the unit file and associated drop-in configuration files. Useful for inspecting `ExecStart=`, `After=`, `Wants=`, and `WantedBy=`. |
 | Make systemd recognise changes to a unit file | `sudo systemctl daemon-reload` | Makes the systemd manager reread unit configurations; does not restart running services. |
 | Start or restart a managed service | `sudo systemctl start <service>` / `sudo systemctl restart <service>` | Starts an inactive service or restarts an existing service; useful after changing its configuration. |
 | Configure automatic startup after reboot | `sudo systemctl enable <service>` | Creates the configured enablement symlinks; does not immediately start the service. |
 | Check whether a service is enabled at boot | `systemctl is-enabled <service>` | Reports the unit's enablement state, independently of whether it is currently running. |
 | Investigate recent logs for a specific service | `sudo journalctl -u <service> -n 50 --no-pager` | Displays the latest 50 journal entries associated with the unit, including startup failures and restart attempts. |
+| Investigate a service's logs from the current boot | `sudo journalctl -u <service> -b --no-pager` | Shows journal entries associated with the specified service during the current boot. Useful for diagnosing startup failures after reboot. |
 | Clear a service's failed state and restart-rate counter | `sudo systemctl reset-failed <service>` | Clears recorded failure state and restart-rate limiting counters, allowing another startup attempt after the underlying issue is fixed. |
 | Check whether an application is listening on its expected TCP port | `sudo ss -lntp` | Lists listening TCP sockets with numeric addresses/ports and associated process information where available. |
 

@@ -16,6 +16,7 @@
 | How much physical RAM is a known process currently using? | `ps -p <PID> -o pid,%cpu,%mem,rss,command` | Shows CPU usage, memory percentage, RSS (resident memory), and command for a specific process. |
 | Check whether a known PID still exists | `ps -p <PID>` | Whether that process is still present. |
 | What is this process's current working directory? | `lsof -a -p <PID> -d cwd` | Shows the current working directory of the specified process. |
+| Is a specific process still running, and what state and resources does it have? | `ps -p <PID> -o pid,stat,%cpu,%mem,rss,comm` | Independently checks a known PID and displays its state, CPU usage, resident memory, and command name. Useful when a process disappears from the visible `top` list. |
 
 ### CPU / Memory
 
@@ -23,6 +24,7 @@
 |---|---|---|
 | How many logical CPUs are available to this workload? | `nproc` | Reports the number of processing units available to the command's current execution environment. |
 | How much RAM is used, free, and available? | `free -h` | Shows human-readable system memory usage, including used, free, cache, available memory, and swap. |
+| Which processes are consuming CPU or RAM, and is the system under resource pressure? | `top` | Live view of CPU utilisation, load average, memory availability, process states, and per-process resource usage. Useful for baseline comparisons and recovery validation. |
 
 ### Ports / Network Resources
 

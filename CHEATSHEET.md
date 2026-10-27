@@ -1,4 +1,3 @@
-
 # Cloud Engineering Command Cheat Sheet
 
 > Quick-reference commands encountered during labs and projects.
@@ -42,6 +41,15 @@
 | Does a regular file with this exact name exist somewhere on the filesystem? | `sudo find / -type f -name <name>` | Searches from `/` for regular files matching the exact name. |
 | What directories are currently in my shell's command search path? | `echo $PATH` | Displays the ordered, colon-separated directories in the current `PATH`. |
 | Temporarily make a directory searchable for commands in this shell environment | `export PATH="/path/to/directory:$PATH"` | Prepends a directory to `PATH` while preserving the existing search path. |
+| What directory am I currently working in? | `pwd` | Prints the shell's current working directory. Useful when relative file paths or application launches fail. |
+| Does a missing file exist within the relevant application directory? | `find <directory> -type f -name <name>` | Searches a targeted directory tree for a matching regular file. Prefer this before searching the entire filesystem. |
+
+### Environment Variables / Application Configuration
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| What exported value is configured for this application variable? | `printenv APP_ENV` | Displays the value of `APP_ENV` in the command's environment. No output can mean the variable is unset or empty. |
+| Temporarily configure an environment variable for child processes | `export APP_ENV=development` | Sets and exports `APP_ENV` in the current shell so subsequently launched child processes inherit it. Does not automatically persist across SSH sessions. |
 
 ### Service Testing
 
@@ -52,6 +60,7 @@
 | Test whether the local HTTP service responds | `curl http://localhost:8080` | Sends an HTTP request to the local service and displays its response. |
 | What HTTP status and headers does this endpoint return? | `curl -i <URL>` | Displays the HTTP response headers/status and response body. |
 | Can this HTTP endpoint respond to a HEAD request? | `curl -I <URL>` | Requests HTTP response headers without the response body. Useful for checking status codes such as `200 OK`. Some endpoints do not support HEAD requests. |
+| Does the local HTTP service respond within a bounded time? | `curl -i --max-time 5 http://127.0.0.1:8080/` | Tests the local HTTP endpoint, including status and headers, with a five-second maximum request duration. Useful for comparing failure and recovery behaviour. |
 
 ### Boot / System State
 

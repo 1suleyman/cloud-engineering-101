@@ -1,4 +1,4 @@
-# Module 01 — Lab 6: Linux Application Troubleshooting & Recovery
+# Module 01 — Lab 4.3: Linux Application Troubleshooting & Recovery
 
 ## Business Problem
 

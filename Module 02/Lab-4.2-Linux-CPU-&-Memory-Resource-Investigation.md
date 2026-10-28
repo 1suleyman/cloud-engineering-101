@@ -1,4 +1,4 @@
-# Module 01 — Lab 5: Linux CPU & Memory Resource Investigation
+# Module 01 — Lab 4.2: Linux CPU & Memory Resource Investigation
 
 ## Business Problem
 

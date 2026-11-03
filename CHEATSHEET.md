@@ -146,6 +146,31 @@
 | Is my `/etc/fstab` configuration valid? | `sudo findmnt --verify --verbose` | Checks filesystem-table entries and reports detectable configuration problems. It does not prove that a reboot will succeed. |
 | Can Linux mount this filesystem using its `/etc/fstab` entry? | `sudo mount <mountpoint>` | Attempts to mount the filesystem using its saved configuration. Useful after unmounting it safely. |
 
+### Bash Automation / Script Validation — Lab 5
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| Check whether a required command is available before running a script | `command -v curl >/dev/null 2>&1` | Checks whether the shell can resolve `curl`. Returns success or failure without displaying output. Useful for dependency checks before executing automation. |
+| Make a Bash pipeline report failures from commands other than the last command | `set -o pipefail` | Makes the pipeline return the rightmost non-zero exit status, or `0` if every command succeeds. Prevents some earlier pipeline failures from being hidden by a successful final command. |
+| Check a Bash script for syntax errors without executing it | `bash -n <script.sh>` | Parses the script and reports detectable Bash syntax errors without running its commands. Does not establish that the script works correctly. |
+| Run static analysis on a shell script | `shellcheck <script.sh>` | Checks for common shell scripting mistakes, quoting issues, and suspicious constructs. Complements syntax checking and runtime testing. |
+| Calculate a downloaded file's SHA-256 checksum | `sha256sum <downloaded-file>` | Produces a SHA-256 digest that can be compared with an independently obtained trusted checksum. A match supports integrity relative to that reference, not software safety. |
+
+### HTTP Health Checks — Lab 5
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| Check whether an HTTP endpoint succeeds within a time limit | `curl --silent --show-error --fail --max-time 5 <URL>` | Suppresses the progress meter, displays errors, treats most HTTP 4xx/5xx responses as failures, and limits the request to five seconds. Useful in automated health checks. |
+| Check whether an HTTP response contains an exact expected line | `curl --silent --show-error --fail --max-time 5 <URL> \| grep -Fxq 'APPLICATION_OK'` | Combines an HTTP request with an exact whole-line content check. With `pipefail` enabled, failures from either command can cause the pipeline to fail. |
+| Start a temporary HTTP server using a dedicated document root | `python3 -m http.server 8080 --bind 127.0.0.1 --directory <web-directory>` | Serves files from the specified directory on IPv4 loopback only. Avoids accidentally serving the current working directory and exposing unrelated files. |
+
+### Logging / Troubleshooting — Lab 5
+
+| What am I trying to find out/do? | Command | What it tells me / does |
+|---|---|---|
+| Display a message in the terminal and append it to a log file | `echo "Health check complete" \| tee -a <log-file>` | Sends the message to standard output and appends it to the file. `-a` preserves previous log entries rather than replacing them. |
+| Inspect the most recent entries in an application log | `tail -n 20 <log-file>` | Displays the last 20 lines of a log file. Useful for reviewing recent health-check results without reading the entire log. |
+
 ---
 
 ## Module XX — Troubleshooting Toolkit
